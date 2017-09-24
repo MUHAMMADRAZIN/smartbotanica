@@ -1,7 +1,7 @@
 {
-  "name": "chat",
+  "name": "smartbotanica",
   "version": "1.0.0",
-  "description": "a simple real-time chat ap",
+  "description": "A plant integrated with Arduino Micro-Controller",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,6 +10,16 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.14.1",
+	"body-parser": "^1.17.x",
+    "cfenv": "^1.0.x",
+    "cloudant": "^1.7.x",
+    "dotenv": "^4.0.0",
     "socket.io": "^1.7.2"
+  },
+  "author": "RND Spark Sdn Bhd",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MUHAMMADRAZIN/smartbotanica"
   }
 }
