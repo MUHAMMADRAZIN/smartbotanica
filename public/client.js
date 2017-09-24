@@ -1,5 +1,5 @@
          // initializing socket, connection to server
-         var socket = io.connect('http://calm-earth-71792.herokuapp.com');
+         var socket = io.connect('https://calm-earth-71792.herokuapp.com');
          socket.on('connect', function(data) {
             socket.emit('join', 'Hello server from client');
          });
