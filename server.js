@@ -17,7 +17,6 @@ app.get('/', function(req, res, next) {
 
 app.use(express.static('public'));
 
-
 io.on('connection', function(client) {
 	console.log('Client connected...');
 
