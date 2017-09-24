@@ -83,7 +83,7 @@ app.get("/api/visitors", function (request, response) {
 var vcapLocal;
 try {
   vcapLocal = require('./vcap-local.json');
-  console.log("Loaded local VCAP", vcapLocal);
+  //console.log("Loaded local VCAP", vcapLocal);
 } catch (e) { }
 
 const appEnvOpts = vcapLocal ? { vcap: vcapLocal} : {}
