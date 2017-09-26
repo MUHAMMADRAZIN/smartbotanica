@@ -86,7 +86,7 @@ io.on('connection', function(client) {
 				}
 			});
 			
-			rowdata = "<tr><td width='38%'>"+current_timestamp+"</td><td width='32%'>-</td><td width='30%'>"+trigger_value+"</td></tr>";
+			rowdata = "<tr><td width='38%'>"+current_timestamp+"</td><td width='32%'>"+sensor_value+"</td><td width='30%'>"+trigger_value+"</td></tr>";
 			
 			client.emit('thread', rowdata);
 			client.broadcast.emit('thread', rowdata);

@@ -422,9 +422,7 @@
 						<option value="smartwindow">Smart Window</option>
 					</select>
 					<button type="button" id="read_btn" onclick="submitAction('Read Sensor')" style="display:none;">Read Sensor</button>
-					<button type="button" id="trigger_btn" onclick="submitAction('Trigger Pump')" style="display:none;">Trigger Pump</button>
-					<button type="button" onclick="testNow()">Test Now</button>
-					
+					<button type="button" id="trigger_btn" onclick="submitAction('Trigger Pump')" style="display:none;">Trigger Pump</button>					
 				</div>
 			</form>
 			
@@ -538,10 +536,6 @@
 			
 			function triggerNow(action){
 				app2.callFromJavascript(action);
-			}
-			
-			function testNow(){
-				app3.callFromJavascript();
 			}
 		</script>  
     </body>
