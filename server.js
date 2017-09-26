@@ -5,114 +5,158 @@ var io = require('socket.io')(server);
 var cfenv = require("cfenv");
 var bodyParser = require('body-parser');
 
+var project_value = "";
+var trigger_value = "";
+var sensor_value = "";
+
+/* Connect with cloudant*/
+var mydb = "";
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
 
+app.use(express.static('public'));
+
 app.get('/', function(req, res, next) {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
-app.use(express.static('public'));
+app.post('/loadlog', function(req, res, next) {
+	
+	project_value = req.body.project_value;
+	
+	checkDBstatus(project_value);
+		
+	if(!mydb) {
+		return;
+	}
+
+	var rowdata = "";
+	mydb.list({ include_docs: true }, function(err, body) 
+	{
+		if (!err) 
+		{
+			body.rows.forEach(function(row) 
+			{
+				rowdata += "<tr><td width='38%'>"+row.doc.current_timestamp+"</td><td width='32%'>"+row.doc.soil_moistness+"</td><td width='30%'>"+row.doc.trigger_value+"</td></tr>";
+			});
+			
+			res.send(rowdata);
+		}
+	});
+});
 
 io.on('connection', function(client) {
-	console.log('Client connected...');
+	//console.log('Client connected...');
 
 	client.on('join', function(data) {
-		console.log(data);
+		//console.log(data);
 	});
 
-	client.on('messages', function(data){
-		client.emit('thread', data);
-		client.broadcast.emit('thread', data);
+	client.on('trigger_parameter', function(data){
+		
+		var parameter_array = data.split('##');
+		
+		project_value = parameter_array[0];
+		trigger_value = parameter_array[1];
+		sensor_value = parameter_array[2];
+		
+		if(trigger_value != "Read Sensor")
+		{
+			if(trigger_value != "Check Sensor")
+			{
+				sensor_value = "-";
+			}
+			
+			checkDBstatus(project_value);
+		
+			var current_timestamp = getDateTime();
+		  
+			if(!mydb) {
+				console.log("No database.");
+				return;
+			}
+			//insert to database
+			mydb.insert({"current_timestamp" : current_timestamp, "soil_moistness" : sensor_value, "trigger_value" : trigger_value}, function(err, body, header) {
+				if (err) {
+				  return console.log('[mydb.insert] ', err.message);
+				}
+			});
+			
+			rowdata = "<tr><td width='38%'>"+current_timestamp+"</td><td width='32%'>-</td><td width='30%'>"+trigger_value+"</td></tr>";
+			
+			client.emit('thread', rowdata);
+			client.broadcast.emit('thread', rowdata);
+		}
 	});
 });
 
-/* Connect with cloudant*/
-var mydb = "smartbotanica";
+function getDateTime() {
 
-app.post("/api/visitors", function (request, response) {
-  var userName = request.body.name;
-  if(!mydb) {
-    console.log("No database.");
-    response.send("Hello " + userName + "!");
-    return;
-  }
-  // insert the username as a document
-  mydb.insert({ "name" : userName }, function(err, body, header) {
-    if (err) {
-      return console.log('[mydb.insert] ', err.message);
-    }
-    response.send("Hello " + userName + "! I added you to the database.");
-  });
-});
+    var date = new Date();
 
-/**
- * Endpoint to get a JSON array of all the visitors in the database
- * REST API example:
- * <code>
- * GET http://localhost:3000/api/visitors
- * </code>
- *
- * Response:
- * [ "Bob", "Jane" ]
- * @return An array of all the visitor names
- */
-app.get("/api/visitors", function (request, response) {
-  var names = [];
-  if(!mydb) {
-    response.json(names);
-    return;
-  }
+    var hour = date.getHours();
+    hour = (hour < 10 ? "0" : "") + hour;
 
-  mydb.list({ include_docs: true }, function(err, body) {
-    if (!err) {
-      body.rows.forEach(function(row) {
-        if(row.doc.name)
-          names.push(row.doc.name);
-      });
-      response.json(names);
-    }
-  });
-});
+    var min  = date.getMinutes();
+    min = (min < 10 ? "0" : "") + min;
 
-// load local VCAP configuration  and service credentials
-var vcapLocal;
-try {
-  vcapLocal = require('./vcap-local.json');
-  //console.log("Loaded local VCAP", vcapLocal);
-} catch (e) { }
+    var sec  = date.getSeconds();
+    sec = (sec < 10 ? "0" : "") + sec;
 
-const appEnvOpts = vcapLocal ? { vcap: vcapLocal} : {}
+    var year = date.getFullYear();
 
-const appEnv = cfenv.getAppEnv(appEnvOpts);
+    var month = date.getMonth() + 1;
+    month = (month < 10 ? "0" : "") + month;
 
-if (appEnv.services['cloudantNoSQLDB']) {
-  // Load the Cloudant library.
-  var Cloudant = require('cloudant');
+    var day  = date.getDate();
+    day = (day < 10 ? "0" : "") + day;
 
-  // Initialize database with credentials
-  var cloudant = Cloudant(appEnv.services['cloudantNoSQLDB'][0].credentials);
+    return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
 
-  //database name
-  var dbName = 'smartbotanica';
-
-  // Create a new "mydb" database.
-  cloudant.db.create(dbName, function(err, data) {
-    if(!err) //err if database doesn't already exists
-      console.log("Created database: " + dbName);
-  });
-
-  // Specify the database we are going to use (mydb)...
-  mydb = cloudant.db.use(dbName);
 }
 
-//serve static file (index.html, images, css)
-app.use(express.static(__dirname + '/views'));
+/* Connect with cloudant*/
+// load local VCAP configuration  and service credentials
+var vcapLocal;
+var cloudant;
 
-var port = process.env.PORT || 3000;
-app.listen(port, function() {
+function checkDBstatus(pass_db)
+{
+	try {
+	  vcapLocal = require('./vcap-local.json');
+	  //console.log("Loaded local VCAP", vcapLocal);
+	} catch (e) { }
+
+	const appEnvOpts = vcapLocal ? { vcap: vcapLocal} : {}
+
+	const appEnv = cfenv.getAppEnv(appEnvOpts);
+
+	if (appEnv.services['cloudantNoSQLDB']) {
+	  // Load the Cloudant library.
+	  var Cloudant = require('cloudant');
+
+	  // Initialize database with credentials
+	  cloudant = Cloudant(appEnv.services['cloudantNoSQLDB'][0].credentials);
+
+	  //database name
+	  var dbName = pass_db;
+
+	  // Create a new database if not exist.
+	  cloudant.db.create(dbName, function(err, data) {
+		if(!err) //err if database doesn't already exists
+		  console.log("Created database: " + dbName);
+	  });
+
+	  // Specify the database we are going to use (smartbotanica)...
+	  mydb = cloudant.db.use(dbName);
+	}
+}
+
+var port = process.env.PORT || 7777;
+server.listen(port, function() {
     console.log("To view your app, open this link in your browser: http://localhost:" + port);
 });

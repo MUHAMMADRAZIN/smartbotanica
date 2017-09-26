@@ -19,7 +19,3 @@ li {
 li:nth-child(odd) { 
 	background: #eee; 
 }
-
-.helloInput {
-  width: 200px;
-}
