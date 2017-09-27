@@ -535,7 +535,14 @@
 			}
 			
 			function triggerNow(action){
-				app2.callFromJavascript(action);
+				if (/Mobi/.test(navigator.userAgent)) 
+				{
+					
+				}
+				else
+				{
+					app2.callFromJavascript(action);
+				}
 			}
 		</script>  
     </body>
