@@ -473,14 +473,14 @@
 							trigger_value = parameter_array[1];
 							sensor_value = parameter_array[2];
 
+							rowdata = "<tr><td width='38%'>"+current_timestamp+"</td><td width='32%'>"+sensor_value+"</td><td width='30%'>"+trigger_value+"</td></tr>";
+
+							$("#table_log tbody").prepend(rowdata);
+
 							if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) 
 							{
 								app2.callFromJavascript(trigger_value);
 							}
-
-							rowdata = "<tr><td width='38%'>"+current_timestamp+"</td><td width='32%'>"+sensor_value+"</td><td width='30%'>"+trigger_value+"</td></tr>";
-
-							$("#table_log tbody").prepend(rowdata);
 						});
 						
 						var myaction = "";
