@@ -47,7 +47,7 @@ app.post('/loadlog', function(req, res, next) {
 		{
 			body.rows.forEach(function(row) 
 			{
-				rowdata += "<tr><td width='38%'>"+row.doc.current_timestamp+"</td><td width='32%'>"+row.doc.soil_moistness+"</td><td width='30%'>"+row.doc.trigger_value+"</td></tr>";
+				rowdata += "<tr><td width='38%'>"+row.doc.current_timestamp+"</td><td width='25%'>"+row.doc.soil_moistness+"</td><td width='37%'>"+row.doc.trigger_value+"</td></tr>";
 			});
 			
 			res.send(rowdata);

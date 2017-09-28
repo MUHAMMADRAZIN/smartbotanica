@@ -437,8 +437,8 @@
 					<thead>
 						<tr>
 							<th width="38%">Timestamp</th>
-							<th width="32%">Soil moistness</th> 
-							<th width="30%">Action</th>
+							<th width="25%">Soil moistness</th> 
+							<th width="37%">Action</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -484,7 +484,7 @@
 								row_display = "";
 							}
 
-							rowdata = "<tr style='"+row_display+"'><td width='38%'>"+current_timestamp+"</td><td width='32%'>"+sensor_value+"</td><td width='30%'>"+trigger_value+"</td></tr>";
+							rowdata = "<tr style='"+row_display+"'><td width='38%'>"+current_timestamp+"</td><td width='25%'>"+sensor_value+"</td><td width='37%'>"+trigger_value+"</td></tr>";
 
 							$("#table_log tbody").prepend(rowdata);
 
@@ -581,7 +581,7 @@
 								app2.callFromJavascript("Auto Update");
 							}
 
-						}, 20000);
+						}, 60000);//60 seconds
 
 				</script>  
     </body>
