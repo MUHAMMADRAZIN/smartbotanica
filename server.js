@@ -4,6 +4,7 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var cfenv = require("cfenv");
 var bodyParser = require('body-parser');
+var nodedatetime = require('node-datetime');
 
 process.env.TZ = 'Asia/Kuala_Lumpur';
 
@@ -74,8 +75,9 @@ io.on('connection', function(client) {
 			}
 			
 			checkDBstatus(project_value);
-		
-			var current_timestamp = moment().format('YYYY-MM-DD hh:mm:ss');;
+
+			var dt = dateTime.create();
+			var current_timestamp = dt.format('Y-m-d H:M:S');
 		  
 			if(!mydb) {
 				console.log("No database.");
