@@ -422,8 +422,9 @@
 						<option value="smartbotanica">Smart Botanica</option>
 						<option value="smartwindow">Smart Window</option>
 					</select>
-					<button type="button" id="read_btn" onclick="submitAction('Read Sensor')" style="display:none;">Read Sensor</button>
-					<button type="button" id="trigger_btn" onclick="submitAction('Trigger Pump')" style="display:none;">Trigger Pump</button>					
+					<button type="button" id="read_btn" onclick="submitAction('Manual Check Sensor')" style="display:none;">Check Sensor</button>
+					<button type="button" id="trigger_btn" onclick="submitAction('Manual Trigger Pump')" style="display:none;">Trigger Pump</button>					
+					<button type="button" id="exit_btn" onclick="exitNow()">Exit</button>	
 				</div>
 			</form>
 			
@@ -552,7 +553,14 @@
 						
 						function sensoryUpdate(sensorval)
 						{
-							myaction = "Check Sensor";
+							myaction = "Manual Read Sensor";
+							mysensor = sensorval;
+							$('#trigger_form').submit();
+						}
+						
+						function autoUpdate(sensorval)
+						{
+							myaction = "Auto Update";
 							mysensor = sensorval;
 							$('#trigger_form').submit();
 						}
@@ -560,6 +568,20 @@
 						function exitNow(){
 							app.callFromJavascript();
 						}
+
+						if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == true) 
+						{
+							document.getElementById("exit_btn").style.display = "none";
+						}
+
+						window.setInterval(function(){
+							
+							if($('#control_slc').val() == "smartbotanica")
+							{
+								app2.callFromJavascript("Auto Update");
+							}
+
+						}, 20000);
 
 				</script>  
     </body>

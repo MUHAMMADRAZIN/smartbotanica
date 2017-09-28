@@ -74,11 +74,25 @@ io.on('connection', function(client) {
 		dt = nodedatetime.create();
 		current_timestamp = dt.format('Y-m-d H:M:S');
 		
-		if(trigger_value != "Read Sensor")
+		if(trigger_value != "Manual Check Sensor")
 		{
-			if(trigger_value != "Check Sensor")
+			if(trigger_value == "Manual Trigger Pump")
 			{
 				sensor_value = "-";
+			}
+			else
+			{
+				if(trigger_value == "Auto Update")
+				{
+					if(Number(sensor_value) < 500)
+					{
+						trigger_value = "Auto Update - Trigger Pump";
+					}
+					else
+					{
+						trigger_value = "Auto Update - No Action";
+					}
+				}
 			}
 			
 			checkDBstatus(project_value);
