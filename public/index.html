@@ -452,96 +452,106 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 
         <script>
-			// initializing socket, connection to server
-			//var socket = io.connect('http://localhost:7777');
-			var socket = io.connect('https://smartbotanica.mybluemix.net/');
-			socket.on('connect', function(data) {
-				socket.emit('join', 'Hello server from client');
-			});
 
-			// listener for 'thread' event, which updates trigger_value
-			socket.on('thread', function(data) {
-				$("#table_log tbody").prepend(data);
-			});
-			
-			var myaction = "";
-			var mysensor = "";
-			
-			function submitAction(action)
-			{
-				myaction = action;
-				
-				$('#trigger_form').submit();
-				
-				triggerNow(action);
-			}
+						var project_value = "";
+						var trigger_value = "";
+						var sensor_value = "";
 
-			// prevents form from submitting and sends a message to server
-			$('#trigger_form').submit(function(){
-				var send_data = $('#control_slc').val()+"##"+myaction+"##"+mysensor;
-				socket.emit('trigger_parameter', send_data);
-				this.reset();				
-				return false;
-			});
-			
-			function changeControlSelection(myselection)
-			{
-				$('html').css({background : 'url(image/'+myselection.value+'.jpg)'});
-				
-				if(myselection.value == "smartbotanica")
-				{
-					$('#table_log tbody').html('');
-					loadDataLog();
+						// initializing socket, connection to server
+						//var socket = io.connect('http://localhost:7777');
+						var socket = io.connect('https://smartbotanica.mybluemix.net/');
+						socket.on('connect', function(data) {
+							socket.emit('join', 'Hello server from client');
+						});
+
+						// listener for 'thread' event, which updates trigger_value
+						socket.on('thread', function(data) {
+
+							var parameter_array = data.split('##');
 					
-					$("#table_log").css('display', 'block');
-					$("#read_btn").css('display', 'block');
-					$("#trigger_btn").css('display', 'block');
-				}
-				else
-				{
-					$("#table_log").css('display', 'none');
-					$("#read_btn").css('display', 'none');
-					$("#trigger_btn").css('display', 'none');
-				}
-			}
-			
-			function loadDataLog() 
-			{
-				var values = {
-					'project_value': $('#control_slc').val()
-				};
-						
-				$.ajax({
-					type: "POST",
-					url: "/loadlog",
-					data: values,
-					timeout: 3000,
-					success: function(data)
-					{
-						$("#table_log tbody").prepend(data);
-					}
-				});
-				return false;
-			}
-			
-			function sensorUpdate(sensorval)
-			{
-				myaction = "Check Sensor";
-				mysensor = sensorval;
-				$('#trigger_form').submit();
-			}
-			
-			function exitNow(){
-				app.callFromJavascript();
-			}
-			
-			function triggerNow(action){
+							project_value = parameter_array[0];
+							trigger_value = parameter_array[1];
+							sensor_value = parameter_array[2];
 
-				if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) 
-				{
-					app2.callFromJavascript(action);
-				}
-			}
-		</script>  
+							if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) 
+							{
+								app2.callFromJavascript(trigger_value);
+							}
+
+							rowdata = "<tr><td width='38%'>"+current_timestamp+"</td><td width='32%'>"+sensor_value+"</td><td width='30%'>"+trigger_value+"</td></tr>";
+
+							$("#table_log tbody").prepend(rowdata);
+						});
+						
+						var myaction = "";
+						var mysensor = "";
+						
+						function submitAction(action)
+						{
+							myaction = action;
+							$('#trigger_form').submit();
+						}
+
+						// prevents form from submitting and sends a message to server
+						$('#trigger_form').submit(function(){
+							var send_data = $('#control_slc').val()+"##"+myaction+"##"+mysensor;
+							socket.emit('trigger_parameter', send_data);
+							this.reset();				
+							return false;
+						});
+						
+						function changeControlSelection(myselection)
+						{
+							$('html').css({background : 'url(image/'+myselection.value+'.jpg)'});
+							
+							if(myselection.value == "smartbotanica")
+							{
+								$('#table_log tbody').html('');
+								loadDataLog();
+								
+								$("#table_log").css('display', 'block');
+								$("#read_btn").css('display', 'block');
+								$("#trigger_btn").css('display', 'block');
+							}
+							else
+							{
+								$("#table_log").css('display', 'none');
+								$("#read_btn").css('display', 'none');
+								$("#trigger_btn").css('display', 'none');
+							}
+						}
+						
+						function loadDataLog() 
+						{
+							var values = {
+								'project_value': $('#control_slc').val()
+							};
+									
+							$.ajax({
+								type: "POST",
+								url: "/loadlog",
+								data: values,
+								timeout: 3000,
+								success: function(data)
+								{
+									$("#table_log tbody").prepend(data);
+								}
+							});
+							return false;
+						}
+						
+						function sensorUpdate(sensorval)
+						{
+							document.getElementById("logo").style.display = "none";
+							myaction = "Check Sensor";
+							mysensor = sensorval;
+							$('#trigger_form').submit();
+						}
+						
+						function exitNow(){
+							app.callFromJavascript();
+						}
+
+				</script>  
     </body>
 </html>  

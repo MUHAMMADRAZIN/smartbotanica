@@ -9,13 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.14.1",
-	"body-parser": "^1.17.x",
+    "body-parser": "^1.17.x",
     "cfenv": "^1.0.x",
     "cloudant": "^1.7.x",
     "dotenv": "^4.0.0",
-    "socket.io": "^1.7.2",
-    "moment-timezone": "*"
+    "express": "^4.14.1",
+    "socket.io": "^1.7.2"
   },
   "repository": {
     "type": "git",

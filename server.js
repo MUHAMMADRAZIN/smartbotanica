@@ -4,9 +4,8 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var cfenv = require("cfenv");
 var bodyParser = require('body-parser');
-var moment = require('moment-timezone');
 
-moment().tz("Asia/Kuala_Lumpur").format();
+process.env.TZ = 'Asia/Kuala_Lumpur';
 
 var project_value = "";
 var trigger_value = "";
@@ -89,7 +88,7 @@ io.on('connection', function(client) {
 				}
 			});
 			
-			rowdata = "<tr><td width='38%'>"+current_timestamp+"</td><td width='32%'>"+sensor_value+"</td><td width='30%'>"+trigger_value+"</td></tr>";
+			rowdata = current_timestamp+"##"+sensor_value+"##"+trigger_value;
 			
 			client.emit('thread', rowdata);
 			client.broadcast.emit('thread', rowdata);
