@@ -4,6 +4,9 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var cfenv = require("cfenv");
 var bodyParser = require('body-parser');
+var moment = require('moment-timezone');
+
+moment().tz("Asia/Kuala_Lumpur").format();
 
 var project_value = "";
 var trigger_value = "";
@@ -73,7 +76,7 @@ io.on('connection', function(client) {
 			
 			checkDBstatus(project_value);
 		
-			var current_timestamp = getDateTime();
+			var current_timestamp = moment().format('YYYY-MM-DD hh:mm:ss');;
 		  
 			if(!mydb) {
 				console.log("No database.");
@@ -93,31 +96,6 @@ io.on('connection', function(client) {
 		}
 	});
 });
-
-function getDateTime() {
-
-    var date = new Date();
-
-    var hour = date.getHours();
-    hour = (hour < 10 ? "0" : "") + hour;
-
-    var min  = date.getMinutes();
-    min = (min < 10 ? "0" : "") + min;
-
-    var sec  = date.getSeconds();
-    sec = (sec < 10 ? "0" : "") + sec;
-
-    var year = date.getFullYear();
-
-    var month = date.getMonth() + 1;
-    month = (month < 10 ? "0" : "") + month;
-
-    var day  = date.getDate();
-    day = (day < 10 ? "0" : "") + day;
-
-    return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
-
-}
 
 /* Connect with cloudant*/
 // load local VCAP configuration  and service credentials
