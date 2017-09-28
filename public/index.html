@@ -456,6 +456,7 @@
 						var current_timestamp = "";
 						var trigger_value = "";
 						var sensor_value = "";
+						var row_display = "";
 
 						// initializing socket, connection to server
 						//var socket = io.connect('http://localhost:7777');
@@ -471,9 +472,18 @@
 					
 							current_timestamp = parameter_array[0];
 							sensor_value = parameter_array[1];
-							trigger_value = parameter_array[2];							
+							trigger_value = parameter_array[2];
 
-							rowdata = "<tr><td width='38%'>"+current_timestamp+"</td><td width='32%'>"+sensor_value+"</td><td width='30%'>"+trigger_value+"</td></tr>";
+							if(sensor_value == "Processing")
+							{
+								row_display = "display:none";
+							}
+							else
+							{
+								row_display = "";
+							}
+
+							rowdata = "<tr style='"+row_display+"'><td width='38%'>"+current_timestamp+"</td><td width='32%'>"+sensor_value+"</td><td width='30%'>"+trigger_value+"</td></tr>";
 
 							$("#table_log tbody").prepend(rowdata);
 
@@ -540,9 +550,8 @@
 							return false;
 						}
 						
-						function sensorUpdate(sensorval)
+						function sensoryUpdate(sensorval)
 						{
-							document.getElementById("logo").style.display = "none";
 							myaction = "Check Sensor";
 							mysensor = sensorval;
 							$('#trigger_form').submit();

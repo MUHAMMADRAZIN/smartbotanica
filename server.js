@@ -62,6 +62,7 @@ io.on('connection', function(client) {
 		//console.log(data);
 	});
 
+	var rowdata = "";
 	client.on('trigger_parameter', function(data){
 		
 		var parameter_array = data.split('##');
@@ -69,6 +70,9 @@ io.on('connection', function(client) {
 		project_value = parameter_array[0];
 		trigger_value = parameter_array[1];
 		sensor_value = parameter_array[2];
+
+		dt = nodedatetime.create();
+		current_timestamp = dt.format('Y-m-d H:M:S');
 		
 		if(trigger_value != "Read Sensor")
 		{
@@ -78,9 +82,6 @@ io.on('connection', function(client) {
 			}
 			
 			checkDBstatus(project_value);
-
-			dt = nodedatetime.create();
-			current_timestamp = dt.format('Y-m-d H:M:S');
 		  
 			if(!mydb) {
 				console.log("No database.");
@@ -94,10 +95,14 @@ io.on('connection', function(client) {
 			});
 			
 			rowdata = current_timestamp+"##"+sensor_value+"##"+trigger_value;
-			
-			client.emit('thread', rowdata);
-			client.broadcast.emit('thread', rowdata);
 		}
+		else
+		{
+			rowdata = current_timestamp+"##Processing##"+trigger_value;
+		}
+
+		client.emit('thread', rowdata);
+		client.broadcast.emit('thread', rowdata);
 	});
 });
 
