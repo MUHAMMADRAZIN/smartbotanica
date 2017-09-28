@@ -536,11 +536,8 @@
 			}
 			
 			function triggerNow(action){
-				if (/Mobi/.test(navigator.userAgent)) 
-				{
-					
-				}
-				else
+
+				if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) 
 				{
 					app2.callFromJavascript(action);
 				}
