@@ -12,6 +12,9 @@ var project_value = "";
 var trigger_value = "";
 var sensor_value = "";
 
+var dt;
+var current_timestamp;
+
 /* Connect with cloudant*/
 var mydb = "";
 
@@ -76,8 +79,8 @@ io.on('connection', function(client) {
 			
 			checkDBstatus(project_value);
 
-			var dt = dateTime.create();
-			var current_timestamp = dt.format('Y-m-d H:M:S');
+			dt = nodedatetime.create();
+			current_timestamp = dt.format('Y-m-d H:M:S');
 		  
 			if(!mydb) {
 				console.log("No database.");
