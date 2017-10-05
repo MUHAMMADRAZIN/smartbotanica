@@ -84,7 +84,7 @@ io.on('connection', function(client) {
 			{
 				if(trigger_value == "Auto Update")
 				{
-					if(Number(sensor_value) < 500)
+					if(Number(sensor_value) > 500)
 					{
 						trigger_value = "Auto Update - Trigger Pump";
 					}
